@@ -1,28 +1,10 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from datetime import datetime
+from function import rem, chg
 
-
-def rem(text):
-    text = str(text.replace("(", ""))
-    text = str(text.replace(")", ""))
-    text = str(text.replace(",", ""))
-    text = str(text.replace("'", ""))
-    text = str(text.replace("[", ""))
-    text = str(text.replace("]", ""))
-    return text
-
-
-def chg(val):
-    if len(str(val)) < 45:
-        return datetime.strptime(str(val), "(datetime.datetime(%Y, %m, %d, %H, %M, %S),)")
-    else:
-        return datetime.strptime(str(val), "(datetime.datetime(%Y, %m, %d, %H, %M, %S, %f),)")
-
-
-name_db = "casas"
+name_db = ""
 username_db = "postgres"
-password_db = "marco"
+password_db = ""
 host_db = "127.0.0.1"
 port_db = "5432"
 

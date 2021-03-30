@@ -2,13 +2,13 @@ import csv
 import psycopg2
 import pandas as pd
 import numpy
-from houseData import rem
+from function import rem
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from time import strftime, gmtime
 
-name_db = "casas"
+name_db = ""
 username_db = "postgres"
-password_db = "marco"
+password_db = ""
 host_db = "127.0.0.1"
 port_db = "5432"
 

@@ -3,30 +3,11 @@ import psycopg2
 import pandas as pd
 import numpy
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from datetime import datetime
+from function import rem, chg, calc
 
-
-def rem(text):
-    text = str(text.replace("(", ""))
-    text = str(text.replace(")", ""))
-    text = str(text.replace(",", ""))
-    text = str(text.replace("'", ""))
-    text = str(text.replace("[", ""))
-    text = str(text.replace("]", ""))
-    return text
-
-
-def chg(val):
-    return datetime.strptime(str(val), "(datetime.datetime(%Y, %m, %d, %H, %M, %S, %f),)")
-
-
-def calc(s, e):
-    return str((chg(e) - chg(s)).days)
-
-
-name_db = "casas"
+name_db = ""
 username_db = "postgres"
-password_db = "marco"
+password_db = ""
 host_db = "127.0.0.1"
 port_db = "5432"
 
