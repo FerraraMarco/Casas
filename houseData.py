@@ -1,19 +1,9 @@
 import csv
-import psycopg2
 import pandas as pd
 import numpy
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from function import rem, chg, calc
+from function import rem, chg, calc, connection, exe
 
-name_db = ""
-username_db = "postgres"
-password_db = ""
-host_db = "127.0.0.1"
-port_db = "5432"
-
-connection = psycopg2.connect(user=username_db, password=password_db, database=name_db, host=host_db, port=port_db)
-cursor = connection.cursor()
-connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+cursor = connection()
 
 queryA = "select id from activity.house"
 queryB = "select min(date) from activity.event join activity.sensor on sensor.id=event.sensor " \
@@ -24,18 +14,13 @@ queryE = "select count(*) from activity.event join activity.sensor on sensor.id=
          "order by(sensor.house) "
 queryG = "select count(distinct(name)) from activity.activity group by(house) order by (house)"
 queryH = "select count(*) from activity.activity group by(house) order by(house)"
-cursor.execute(queryA)
-colA = cursor.fetchall()
-cursor.execute(queryB)
-colB = cursor.fetchall()
-cursor.execute(queryC)
-colC = cursor.fetchall()
-cursor.execute(queryE)
-colE = cursor.fetchall()
-cursor.execute(queryG)
-colG = cursor.fetchall()
-cursor.execute(queryH)
-colH = cursor.fetchall()
+
+colA = exe(cursor, queryA)
+colB = exe(cursor, queryB)
+colC = exe(cursor, queryC)
+colE = exe(cursor, queryE)
+colG = exe(cursor, queryG)
+colH = exe(cursor, queryH)
 
 with open('houseStats.csv', 'w', newline='') as file:
     writer = csv.writer(file)
@@ -46,33 +31,31 @@ with open('houseStats.csv', 'w', newline='') as file:
 df = pd.read_csv("houseStats.csv")
 
 for i in range(len(colA)):
-    df.loc[i, 'Houses'] = rem(str(colA[i]))
+    df.loc[i, 'Houses'] = rem(colA[i])
     df.loc[i, 'Start Date Test'] = chg(colB[i]).date()
     df.loc[i, 'End Date Test'] = chg(colC[i]).date()
     df.loc[i, 'Test Duration (days)'] = calc(colB[i], colC[i])
-    df.loc[i, 'Total Events'] = rem(str(colE[i]))
-    df.loc[i, 'Average Events (days)'] = round(float(rem(str(colE[i]))) / float(calc(colB[i], colC[i])), 2)
+    df.loc[i, 'Total Events'] = rem(colE[i])
+    df.loc[i, 'Average Events (days)'] = round(float(rem(colE[i])) / float(calc(colB[i], colC[i])), 2)
 
     stdDevEv = "select  count(*) from activity.event join activity.sensor on sensor.id = event.sensor " \
-               "where house = '" + rem(str(colA[i])) + "'group by(house, event.onlyDate)"
-    cursor.execute(stdDevEv)
-    colStdDevEV = cursor.fetchall()
+               "where house = '" + rem(colA[i]) + "'group by(house, event.onlyDate)"
+    colStdDevEV = exe(cursor, stdDevEv)
     stdVetEV = []
     for k in range(len(colStdDevEV)):
-        stdVetEV.append(int(rem(str(colStdDevEV[k]))))
+        stdVetEV.append(int(rem(colStdDevEV[k])))
 
     df.loc[i, 'StdDevEvents'] = round(numpy.std(stdVetEV), 4)
-    df.loc[i, 'Different Activities'] = rem(str(colG[i]))
-    df.loc[i, 'Total Activities'] = rem(str(colH[i]))
-    df.loc[i, 'Average Activities (days)'] = round(float(rem(str(colH[i]))) / float(rem(str(colG[i]))), 2)
+    df.loc[i, 'Different Activities'] = rem(colG[i])
+    df.loc[i, 'Total Activities'] = rem(colH[i])
+    df.loc[i, 'Average Activities (days)'] = round(float(rem(colH[i])) / float(rem(colG[i])), 2)
 
-    stdDevAct = "select count(date) from activity.activity where house = '" + rem(str(colA[i])) + \
+    stdDevAct = "select count(date) from activity.activity where house = '" + rem(colA[i]) + \
                 "' group by(house, date) order by(house, date) "
-    cursor.execute(stdDevAct)
-    colStdDevAct = cursor.fetchall()
+    colStdDevAct = exe(cursor, stdDevAct)
     stdVetAct = []
     for k in range(len(colStdDevAct)):
-        stdVetAct.append(int(rem(str(colStdDevAct[k]))))
+        stdVetAct.append(int(rem(colStdDevAct[k])))
 
     df.loc[i, 'StdDevActivities'] = round(numpy.std(stdVetAct), 4)
 
