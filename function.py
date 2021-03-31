@@ -35,7 +35,7 @@ def rem(text):  # remove extra characters when pulling out from db
 
 
 def chg(date):  # convert string into dd/mm/yyyy hh:mm:ss.
-    if len(str(date)) < 45:
+    if len(date.split(",")) <= 7:
         return datetime.strptime(str(date), "(datetime.datetime(%Y, %m, %d, %H, %M, %S),)")
     else:
         return datetime.strptime(str(date), "(datetime.datetime(%Y, %m, %d, %H, %M, %S, %f),)")
