@@ -48,7 +48,7 @@ for i in range(len(colA)):
     df.loc[i, 'StdDevEvents'] = round(numpy.std(stdVetEV), 4)
     df.loc[i, 'Different Activities'] = rem(colG[i])
     df.loc[i, 'Total Activities'] = rem(colH[i])
-    df.loc[i, 'Average Activities (days)'] = round(float(rem(colH[i])) / float(rem(colG[i])), 2)
+    df.loc[i, 'Average Activities (days)'] = round(float(rem(colH[i])) / float(calc(colB[i], colC[i])), 2)
 
     stdDevAct = "select count(date) from activity.activity where house = '" + rem(colA[i]) + \
                 "' group by(house, date) order by(house, date) "
