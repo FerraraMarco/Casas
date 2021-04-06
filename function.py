@@ -1,20 +1,37 @@
+import glob
 import psycopg2
 from datetime import datetime
+import traces
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-name_db = ""
+name_db = "casas"
 username_db = "postgres"
-password_db = ""
+password_db = "marco"
 host_db = "127.0.0.1"
 port_db = "5432"
 
 
-def connection():  # create a connection with the db
-    connect = psycopg2.connect(user=username_db, password=password_db,
-                               database=name_db, host=host_db, port=port_db)
-    cursor = connect.cursor()
-    connect.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    return cursor
+def read_all(pattern):
+    # Read all of the CSVs in a directory matching the filename pattern as TimeSeries.
+    result = []
+    for filename in glob.iglob(pattern):
+        ts = traces.TimeSeries.from_csv(filename, time_column=1, value_column=2, value_transform=int, default=0)
+        ts.compact()
+        result.append(ts)
+    return result
+
+
+def connection(val):  # create a connection with the db
+    if val is None:
+        connect = psycopg2.connect(user=username_db, password=password_db,
+                                   database=name_db, host=host_db, port=port_db)
+        cursor = connect.cursor()
+        connect.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        return cursor
+    else:
+        connect = psycopg2.connect(user=username_db, password=password_db,
+                                   database=name_db, host=host_db, port=port_db)
+        return connect
 
 
 def exe(cur, query):  # execute the query and return data
