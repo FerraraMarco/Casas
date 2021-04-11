@@ -15,7 +15,7 @@ def read_all(pattern):
     # Read all of the CSVs in a directory matching the filename pattern as TimeSeries.
     result = []
     for filename in glob.iglob(pattern):
-        ts = traces.TimeSeries.from_csv(filename, time_column=1, value_column=2, value_transform=int, default=0)
+        ts = traces.TimeSeries.from_csv(filename, time_column=0, value_column=1, value_transform=int, default=0)
         ts.compact()
         result.append(ts)
     return result
