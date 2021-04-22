@@ -1,18 +1,17 @@
 from pylab import rcParams
 import warnings
 import itertools
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
 import matplotlib
 
 warnings.filterwarnings("ignore")
-"""plt.style.use('fivethirtyeight')
+plt.style.use('fivethirtyeight')
 matplotlib.rcParams['axes.labelsize'] = 14
 matplotlib.rcParams['xtick.labelsize'] = 12
 matplotlib.rcParams['ytick.labelsize'] = 12
-matplotlib.rcParams['text.color'] = 'k'"""
+matplotlib.rcParams['text.color'] = 'k'
 
 dfTime = pd.read_csv('HH113-WeightedAVG.csv')
 dfTime['Date'] = pd.to_datetime(dfTime['Date'], format='%Y-%m-%d %H:%M:%S.%f')
@@ -41,7 +40,6 @@ for param in pdq:
             dfSeasonal.loc[i, 'Seasonal order'] = param_seasonal
             dfSeasonal.loc[i, 'Result'] = results.aic
             i += 1
-            # print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
         except:
             continue
 dfSeasonal.to_csv("ARIMA.csv", index=False)
